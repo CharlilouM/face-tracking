@@ -7,9 +7,9 @@ import pyfirmata
 board = pyfirmata.Arduino('COM17')
 
 # setup servo on pin 2
-precision=50
+precision=25
 angle  = 90                     # initial angle
-vitesse = 5                      # vitesse
+vitesse = 2                     # vitesse
 servox = board.get_pin('d:2:s') # pin to communicate to the servo with
 # set up a function that will tell the servo to move to a specific position when called
 
@@ -17,10 +17,10 @@ servox.write(angle) # move servo to specified angle
 
 def move(tx,ty,angle):
     tx_ref,ty_ref=120,50 #milieu de la fenetre
-    if tx<tx_ref-precision and angle>5:
+    if tx<tx_ref-precision and angle>vitesse:
         angle-=vitesse
         servox.write(angle)
-    if tx>tx_ref+precision and angle<175:
+    if tx>tx_ref+precision and angle<180-vitesse:
         angle+=vitesse
         servox.write(angle)
     return angle

@@ -150,11 +150,15 @@ def detectAndTrackLargestFace():
                     cv2.rectangle(resultImage, (t_x, t_y),
                                                 (t_x + t_w , t_y + t_h),
                                                 rectangleColor ,2)
+                    
+
                     if c==0:
                         angle=90 #premier appel
-                    #angle=cnt.move(t_x,t_y,angle)
-                    cnt.move2(t_x,t_y)
-                    #print('angle= ',angle)
+                    angle=cnt.move(t_x,t_y,angle)
+                    #cnt.move2(t_x,t_y)
+                    print('angle= ',angle)
+                    c=1
+
                 else:
                     #If the quality of the tracking update is not
                     #sufficient (e.g. the tracked region moved out of the
