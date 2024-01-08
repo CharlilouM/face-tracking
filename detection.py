@@ -29,7 +29,7 @@ def detectAndTrackLargestFace():
 
     #Start the window thread for the two windows we are using
     cv2.startWindowThread()
-
+    
     #Create the tracker we will use
     tracker = dlib.correlation_tracker()
 
@@ -41,6 +41,7 @@ def detectAndTrackLargestFace():
     rectangleColor = (0,165,255)
 
     c=0
+
     try:
         while True:
             #Retrieve the latest image from the webcam
@@ -124,7 +125,6 @@ def detectAndTrackLargestFace():
                     #Set the indicator variable such that we know the
                     #tracker is tracking a region in the image
                     trackingFace = 1
-
             #Check if the tracker is actively tracking a region in the image
             if trackingFace:
 
