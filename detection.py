@@ -12,8 +12,8 @@ import controller as cnt #arduino
 #the OpenCV library
 faceCascade = cv2.CascadeClassifier("C:/Users/charl/anaconda/Lib/site-packages/cv2/data/haarcascade_frontalface_default.xml")
 #The deisred output width and height
-OUTPUT_SIZE_WIDTH = 775
-OUTPUT_SIZE_HEIGHT = 600
+OUTPUT_SIZE_WIDTH = 1920
+OUTPUT_SIZE_HEIGHT = 1080
 
 def detectAndTrackLargestFace():
     #Open the first webcame device
@@ -25,7 +25,7 @@ def detectAndTrackLargestFace():
 
     #Position the windows next to eachother
     cv2.moveWindow("base-image",0,100)
-    cv2.moveWindow("result-image",400,100)
+    cv2.moveWindow("result-image",10,10)
 
     #Start the window thread for the two windows we are using
     cv2.startWindowThread()
@@ -40,10 +40,12 @@ def detectAndTrackLargestFace():
     #The color of the rectangle we draw around the face
     rectangleColor = (0,165,255)
 
-    c=0
-
+    direction=True
+    angle=90
+    track_time=0
     try:
         while True:
+            
             #Retrieve the latest image from the webcam
             rc,fullSizeBaseImage = capture.read()
 
@@ -72,6 +74,21 @@ def detectAndTrackLargestFace():
 
             #If we are not tracking a face, then try to detect one
             if not trackingFace:
+
+                #bouge a droite puis a gauche pour scanner l'environnement et trouver un visage si ça fait logntemps
+                track_time-=1
+                print(track_time)
+                if track_time<0: #vérifie si on ne détecte pas de visage depuis un moment
+                    if direction==True:
+                        angle+=1
+                        if angle>178:
+                            direction=False
+                    if direction==False:
+                        angle-=1
+                        if angle<2:
+                            direction=True
+                    cnt.scan(angle)
+
 
                 #For the face detection, we need to make use of a gray
                 #colored image so we will convert the baseImage to a
@@ -125,8 +142,12 @@ def detectAndTrackLargestFace():
                     #Set the indicator variable such that we know the
                     #tracker is tracking a region in the image
                     trackingFace = 1
+
+
             #Check if the tracker is actively tracking a region in the image
             if trackingFace:
+
+                track_time=40 #renitialise delay de tracking
 
                 #Update the tracker and request information about the
                 #quality of the tracking update
@@ -138,7 +159,7 @@ def detectAndTrackLargestFace():
                 #updated position of the tracked region and draw the
                 #rectangle
                 #print("tracking quality : ",trackingQuality)
-                if trackingQuality >= 8.75:
+                if trackingQuality >= 6.5:
                     tracked_position =  tracker.get_position()
                     #print("tracked_position : ",tracked_position)
 
@@ -146,18 +167,16 @@ def detectAndTrackLargestFace():
                     t_y = int(tracked_position.top())
                     t_w = int(tracked_position.width())
                     t_h = int(tracked_position.height())
-                    print('position = ',t_x," ",t_y)
+                    #print('position = ',t_x," ",t_y)
                     cv2.rectangle(resultImage, (t_x, t_y),
                                                 (t_x + t_w , t_y + t_h),
                                                 rectangleColor ,2)
                     
 
-                    if c==0:
-                        angle=90 #premier appel
                     angle=cnt.move(t_x,t_y,angle)
                     #cnt.move2(t_x,t_y)
-                    print('angle= ',angle)
-                    c=1
+                    #print('angle= ',angle)
+
 
                 else:
                     #If the quality of the tracking update is not
@@ -182,7 +201,7 @@ def detectAndTrackLargestFace():
                                      (OUTPUT_SIZE_WIDTH,OUTPUT_SIZE_HEIGHT))
             #largeResult=cv2.flip(largeResult, 1)
             #Finally, we want to show the images on the screen
-            cv2.imshow("base-image", baseImage)
+            #cv2.imshow("base-image", baseImage)
             cv2.imshow("result-image", largeResult)
 
 

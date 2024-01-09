@@ -30,3 +30,5 @@ def move2(tx,ty):
         angle=(tx - 0) * (135 - 45) // (240 - 0) +45 
         servox.write(angle)
 
+def scan(angle):
+    servox.write(angle)
